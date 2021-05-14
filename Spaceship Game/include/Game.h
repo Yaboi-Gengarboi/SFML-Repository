@@ -2,22 +2,24 @@
 // Game.h
 // Justyn Durnford
 // Created on 2021-05-07
-// Last modified on 2021-05-12
+// Last modified on 2021-05-13
 // Header file for the Game class.
 
 #ifndef SPACESHIP_GAME_GAME_H
 #define SPACESHIP_GAME_GAME_H
 
 #include "Entity.h"
+#include "Player.h"
 
-extern Texture spaceship_texture;
+extern Texture player_spaceship_texture;
+extern Texture enemy_spaceship_texture;
 
 class Game
 {
 	RenderWindow window_;
 	Event event_;
 	map<Keyboard::Key, bool> keyboardInput_;
-	Entity player_;
+	Player player_;
 
 	//
 	void processEvents();

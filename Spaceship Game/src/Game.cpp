@@ -7,7 +7,8 @@
 
 #include "Game.h"
 
-Texture spaceship_texture;
+Texture player_spaceship_texture;
+Texture enemy_spaceship_texture;
 
 void Game::processEvents()
 {
@@ -86,7 +87,7 @@ void Game::render()
 
 Game::Game(uint16_t width, uint16_t height)
 	: window_(VideoMode(width, height), "Spaceship Game"),
-	  player_(&spaceship_texture, windowWidth() / 2.f, windowHeight() / 2.f)
+	  player_(&player_spaceship_texture, windowWidth() / 2.f, windowHeight() / 2.f)
 {
 	keyboardInput_[Keyboard::Key::W] = false;
 	keyboardInput_[Keyboard::Key::A] = false;

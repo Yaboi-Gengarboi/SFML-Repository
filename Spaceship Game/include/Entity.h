@@ -2,7 +2,7 @@
 // Entity.h
 // Justyn Durnford
 // Created on 2021-05-07
-// Last modified on 2021-05-12
+// Last modified on 2021-05-13
 // Header file for the Entity class.
 
 #ifndef SPACESHIP_GAME_ENTITY_H
@@ -40,7 +40,7 @@ class Entity
 	Entity(Texture* texture_ptr, const IntRect& sprite_rect, const Point2f& pos);
 
 	//
-	void update(Time dt);
+	virtual void update(Time dt) = 0;
 };
 
 #endif // SPACESHIP_GAME_ENTITY_H
