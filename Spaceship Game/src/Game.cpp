@@ -2,7 +2,7 @@
 // Game.cpp
 // Justyn Durnford
 // Created on 2021-05-03
-// Last modified on 2021-05-13
+// Last modified on 2021-05-15
 // Source file for the Game class.
 
 #include "Game.h"
@@ -49,6 +49,9 @@ void Game::handleKeyboardInput(Keyboard::Key key, bool is_pressed)
 			break;
 		case Keyboard::Key::D:
 			keyboardInput_[key] = is_pressed;
+			break;
+		case Keyboard::Key::Escape:
+			window_.close();
 			break;
 		default:
 			break;
