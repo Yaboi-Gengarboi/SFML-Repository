@@ -2,7 +2,7 @@
 // Game.cpp
 // Justyn Durnford
 // Created on 2021-05-03
-// Last modified on 2021-05-12
+// Last modified on 2021-05-13
 // Source file for the Game class.
 
 #include "Game.h"
@@ -61,21 +61,15 @@ void Game::update(Time dt)
 	player_.velocity.y = 0.f;
 
 	if (keyboardInput_[Keyboard::Key::W])
-		player_.velocity.y = -400.f;
+		player_.velocity.y -= 400.f;
 	if (keyboardInput_[Keyboard::Key::A])
-		player_.velocity.x = -400.f;
+		player_.velocity.x -= 400.f;
 	if (keyboardInput_[Keyboard::Key::S])
-		player_.velocity.y = 400.f;
+		player_.velocity.y += 400.f;
 	if (keyboardInput_[Keyboard::Key::D])
-		player_.velocity.x = 400.f;
+		player_.velocity.x += 400.f;
 
 	player_.update(dt);
-	Vector2f player_pos(player_.sprite.getPosition());
-
-	clamp(player_pos.x, 0.f, windowWidth() - 32.f);
-	clamp(player_pos.y, 0.f, windowHeight() - 32.f);
-
-	player_.sprite.setPosition(player_pos.x, player_pos.y);
 }
 
 void Game::render()
@@ -85,9 +79,9 @@ void Game::render()
 	window_.display();
 }
 
-Game::Game(uint16_t width, uint16_t height)
-	: window_(VideoMode(width, height), "Spaceship Game"),
-	  player_(&player_spaceship_texture, windowWidth() / 2.f, windowHeight() / 2.f)
+Game::Game(uint32_t width, uint32_t height)
+	: window_(VideoMode(width, height), "Spaceship Game", Style::Titlebar | Style::Close),
+	  player_(&player_spaceship_texture, window_width / 2.f, window_height / 2.f)
 {
 	keyboardInput_[Keyboard::Key::W] = false;
 	keyboardInput_[Keyboard::Key::A] = false;
@@ -95,16 +89,6 @@ Game::Game(uint16_t width, uint16_t height)
 	keyboardInput_[Keyboard::Key::D] = false;
 
 	window_.setFramerateLimit(60);
-}
-
-uint16_t Game::windowWidth() const
-{
-	return window_.getSize().x;
-}
-
-uint16_t Game::windowHeight() const
-{
-	return window_.getSize().y;
 }
 
 void Game::run()

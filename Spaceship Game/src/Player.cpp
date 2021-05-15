@@ -29,5 +29,9 @@ void Player::update(Time dt)
 {
 	float s = dt.asSeconds();
 	Point2f pos(sprite.getPosition().x, sprite.getPosition().y);
-	sprite.setPosition(pos.x + velocity.x * s, pos.y + velocity.y * s);
+	pos.x += velocity.x * s;
+	pos.y += velocity.y * s;
+	clamp(pos.x, 0.f, window_width - 32.f);
+	clamp(pos.y, 0.f, window_height - 32.f);
+	sprite.setPosition(pos.x, pos.y);
 }

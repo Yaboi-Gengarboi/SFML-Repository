@@ -2,7 +2,7 @@
 // main.cpp
 // Justyn Durnford
 // Created on 2021-05-07
-// Last modified on 2021-05-13
+// Last modified on 2021-05-15
 // Main file.
 
 #include "Define.h"
@@ -18,11 +18,8 @@ int main()
 		return -1;
 	}
 
-	Player spaceship(&player_spaceship_texture, 0.f, 0.f);
-
-	Game game(800, 600);
+	Game game(window_width, window_height);
 	game.run();
-
 
 	return 0;
 }

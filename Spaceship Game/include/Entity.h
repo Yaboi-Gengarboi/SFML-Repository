@@ -5,8 +5,7 @@
 // Last modified on 2021-05-13
 // Header file for the Entity class.
 
-#ifndef SPACESHIP_GAME_ENTITY_H
-#define SPACESHIP_GAME_ENTITY_H
+#pragma once
 
 #include "Define.h"
 
@@ -42,5 +41,3 @@ class Entity
 	//
 	virtual void update(Time dt) = 0;
 };
-
-#endif // SPACESHIP_GAME_ENTITY_H

@@ -5,8 +5,7 @@
 // Last modified on 2021-05-13
 // Header file for the Game class.
 
-#ifndef SPACESHIP_GAME_GAME_H
-#define SPACESHIP_GAME_GAME_H
+#pragma once
 
 #include "Entity.h"
 #include "Player.h"
@@ -36,16 +35,8 @@ class Game
 	public:
 
 	//
-	Game(uint16_t width, uint16_t height);
-
-	//
-	uint16_t windowWidth() const;
-
-	//
-	uint16_t windowHeight() const;
+	Game(uint32_t width, uint32_t height);
 
 	//
 	void run();
 };
-
-#endif // SPACESHIP_GAME_GAME_H

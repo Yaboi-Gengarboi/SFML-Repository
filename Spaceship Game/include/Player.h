@@ -5,8 +5,7 @@
 // Last modified on 2021-05-13
 // Header file for the Player class.
 
-#ifndef SPACESHIP_GAME_PLAYER_H
-#define SPACESHIP_GAME_PLAYER_H
+#pragma once
 
 #include "Entity.h"
 
@@ -28,5 +27,3 @@ class Player : public Entity
 
 	void update(Time dt);
 };
-
-#endif // SPACESHIP_GAME_PLAYER_H
