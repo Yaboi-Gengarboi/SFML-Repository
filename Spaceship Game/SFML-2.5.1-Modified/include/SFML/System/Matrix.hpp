@@ -2,10 +2,10 @@
 // 
 // This is an added file for this modified version of SFML 2.5.1
 // Modified by Justyn Durnford
-// Last modified on 2021-05-15
+// Last modified on 2021-05-20
 // 
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (X) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,10 @@
 #ifndef SFML_MATRIX_HPP
 #define SFML_MATRIX_HPP
 
+#include <SFML/System/Arithmetic.hpp>
+
 #include <algorithm>
+#include <array>
 #include <concepts>
 #include <cstddef>
 #include <initializer_list>
@@ -37,272 +40,298 @@
 
 namespace sf
 {
-	template <std::semiregular T> class Matrix
+	template <arithmetic T, std::size_t X, std::size_t Y> class Matrix
 	{
-		T** matrix_;
-		std::size_t rows_;
-		std::size_t cols_;
+		// Private member variable
+		std::array<std::array<T, X>, Y> data_;
 
-		// 
-		void allocate(std::size_t rows, std::size_t cols)
+		// Private member functions
+
+		//
+		inline void checkRow(std::size_t r) const
 		{
-			rows_ = rows;
-			cols_ = cols;
-
-			try
-			{
-				matrix_ = new T*[rows_];
-				for (std::size_t r = 0u; r < rows_; ++r)
-					matrix_[r] = new T[cols_];
-			}
-			catch (const std::bad_alloc& exc)
-			{
-				null();
-				throw exc;
-				return;
-			}
-		}
-
-		// 
-		void deallocate() noexcept
-		{
-			for (std::size_t r = 0u; r < rows_; ++r)
-				delete[] matrix_[r];
-			delete[] matrix_;
-		}
-
-		// 
-		void reallocate(std::size_t rows, std::size_t cols)
-		{
-			if (rows != rows_ || cols != cols_)
-			{
-				deallocate();
-				allocate(rows, cols);
-			}
-		}
-
-		// 
-		void null() noexcept
-		{
-			for (std::size_t r = 0u; r < rows_; ++r)
-				matrix_[r] = nullptr;
-			matrix_ = nullptr;
-		}
-
-		// 
-		void checkBounds(std::size_t x, std::size_t y)
-		{
-			if (y >= rows_)
+			if (r >= Y)
 				throw std::out_of_range("Invalid row index");
-			if (x >= cols_)
+		}
+
+		//
+		inline void checkCol(std::size_t c) const
+		{
+			if (c >= X)
 				throw std::out_of_range("Invalid column index");
+		}
+
+		// 
+		void checkBounds(std::size_t x, std::size_t y) const
+		{
+			checkRow(y);
+			checkCol(x);
 		}
 
 		public:
 
-		// 
-		Matrix()
-		{
-			matrix_ = nullptr;
-			rows_ = std::size_t(0u);
-			cols_ = std::size_t(0u);
-		}
+		using value_type = T;
+		using size_type = std::size_t;
+		using reference = T&;
+		using const_reference = const T&;
 
 		// 
-		Matrix(std::size_t rows, std::size_t cols)
-		{
-			allocate(rows, cols);
-		}
+		Matrix() = default;
 
 		// 
-		Matrix(std::size_t rows, std::size_t cols, const T& val)
+		Matrix(const T& value)
 		{
-			allocate(rows, cols);
-
-			for (std::size_t r = 0u; r < rows_; ++r)
+			for (std::size_t r(0u); r < Y; ++r)
 			{
-				for (std::size_t c = 0u; c < cols_; ++c)
-					matrix_[r][c] = val;
+				for (std::size_t c(0u); c < X; ++c)
+					data_[r][c] = value;
 			}
 		}
 
 		// 
 		Matrix(std::initializer_list<std::initializer_list<T>> list)
 		{
-			std::size_t c(0u);
-			for (auto row : list)
-			{
-				if (row.size() > c)
-					c = row.size();
-			}
-
-			allocate(list.size(), c);
-
 			std::size_t r(0u);
-			c = 0u;
-			auto row_iter(list.begin());
 
-			while (row_iter != list.end())
+			for (const auto& row : list)
 			{
-				auto col_iter(row_iter->begin());
-
-				while (col_iter != row_iter->end())
-				{
-					matrix_[r][c] = *col_iter;
-					++c;
-					++col_iter;
-				}
-
-				c = 0u;
+				std::copy(row.begin(), row.begin() + X, data_[r].begin());
 				++r;
-				++row_iter;
 			}
 		}
 
 		// 
-		Matrix(const Matrix& other)
+		template <arithmetic U>
+		explicit Matrix(const Matrix<U, X, Y>& other)
 		{
-			allocate(other.rows_, other.cols_);
-
-			for (std::size_t r = 0u; r < rows_; ++r)
+			for (std::size_t r(0u); r < Y; ++r)
 			{
-				for (std::size_t c = 0u; c < cols_; ++c)
-					matrix_[r][c] = other.matrix_[r][c];
+				for (std::size_t c(0u); c < X; ++c)
+					data_[r][c] = static_cast<T>(other.data_[r][c]);
 			}
 		}
 
 		// 
-		Matrix(Matrix&& other) noexcept
-		{
-			matrix_ = other.matrix_;
-			rows_ = other.rows_;
-			cols_ = other.cols_;
+		Matrix(const Matrix& other) = default;
 
-			other.null();
-		}
+		// 
+		Matrix(Matrix&& other) = default;
 
 		// 
 		Matrix& operator = (std::initializer_list<std::initializer_list<T>> list)
 		{
-			deallocate();
-
-			std::size_t c(0u);
-			for (auto row : list)
-			{
-				if (row.size() > c)
-					c = row.size();
-			}
-
-			allocate(list.size(), c);
-
 			std::size_t r(0u);
-			c = 0u;
-			auto row_iter(list.begin());
 
-			while (row_iter != list.end())
+			for (const auto& row : list)
 			{
-				auto col_iter(row_iter->begin());
-
-				while (col_iter != row_iter->end())
-				{
-					matrix_[r][c] = *col_iter;
-					++c;
-					++col_iter;
-				}
-
-				c = 0u;
+				std::copy(row.begin(), row.begin() + X, data_[r].begin());
 				++r;
-				++row_iter;
 			}
 
 			return *this;
 		}
 
 		// 
-		Matrix& operator = (const Matrix& other)
+		Matrix& operator = (const Matrix& other) = default;
+
+		// 
+		Matrix& operator = (Matrix && other) = default;
+
+		// 
+		~Matrix() = default;
+
+		// 
+		std::size_t rowCount() const
 		{
-			deallocate();
-			allocate(other.rows_, other.cols_);
-
-			for (std::size_t r = 0u; r < rows_; ++r)
-			{
-				for (std::size_t c = 0u; c < cols_; ++c)
-					matrix_[r][c] = other.matrix_[r][c];
-			}
-
-			return *this;
+			return Y;
 		}
 
 		// 
-		Matrix& operator = (Matrix&& other) noexcept
+		std::size_t colCount() const
 		{
-			deallocate();
-
-			matrix_ = other.matrix_;
-			rows_ = other.rows_;
-			cols_ = other.cols_;
-
-			other.null();
-			return *this;
+			return X;
 		}
 
-		// 
-		~Matrix() noexcept
+		//
+		std::array<T, X> getRow(std::size_t y) const
 		{
-			deallocate();
+			checkRow(y);
+			return data_[y];
 		}
 
-		// 
-		std::size_t rowSize() const
+		//
+		std::array<T, Y> getCol(std::size_t x) const
 		{
-			return rows_;
-		}
+			checkRow(x);
+			std::array<T, Y> arr;
 
-		// 
-		std::size_t colSize() const
-		{
-			return cols_;
-		}
+			for (std::size_t r = 0; r < Y; ++r)
+				arr[r] = data_[r][x];
 
-		// 
-		bool isEmpty() const
-		{
-			return (rows_ == 0u) || (cols_ == 0u);
+			return arr;
 		}
 
 		// 
 		T& at(std::size_t x, std::size_t y)
 		{
 			checkBounds(x, y);
-			return matrix_[y][x];
+			return data_[y][x];
 		}
 
 		// 
 		const T& at(std::size_t x, std::size_t y) const
 		{
 			checkBounds(x, y);
-			return matrix_[y][x];
+			return data_[y][x];
 		}
 
 		// 
 		void set(std::size_t x, std::size_t y, const T& value)
 		{
 			checkBounds(x, y);
-			matrix_[y][x] = value;
+			data_[y][x] = value;
 		}
 
 		// 
 		T& operator () (std::size_t x, std::size_t y)
 		{
-			return matrix_[y][x];
+			return data_[y][x];
 		}
 
 		// 
 		const T& operator () (std::size_t x, std::size_t y) const
 		{
-			return matrix_[y][x];
+			return data_[y][x];
+		}
+
+		// 
+		template <arithmetic U> 
+		Matrix& operator += (const Matrix<U, X, Y>& other)
+		{
+			for (std::size_t r(0u); r < Y; ++r)
+			{
+				for (std::size_t c(0u); c < X; ++c)
+					data_[r][c] += static_cast<T>(other.data_[r][c]);
+			}
+
+			return *this;
+		}
+
+		// 
+		template <arithmetic U>
+		Matrix& operator -= (const Matrix<U, X, Y>& other)
+		{
+			for (std::size_t r(0u); r < Y; ++r)
+			{
+				for (std::size_t c(0u); c < X; ++c)
+					data_[r][c] -= static_cast<T>(other.data_[r][c]);
+			}
+
+			return *this;
+		}
+
+		// 
+		template <arithmetic U> 
+		Matrix& operator *= (U scalar)
+		{
+			for (std::size_t r(0u); r < Y; ++r)
+			{
+				for (std::size_t c(0u); c < X; ++c)
+					data_[r][c] *= scalar;
+			}
+
+			return *this;
+		}
+
+		// 
+		template <arithmetic U> 
+		Matrix& operator /= (U scalar)
+		{
+			for (std::size_t r(0u); r < Y; ++r)
+			{
+				for (std::size_t c(0u); c < X; ++c)
+					data_[r][c] /= scalar;
+			}
+
+			return *this;
 		}
 	};
+
+	template <arithmetic T> 
+	inline T determinant(const Matrix<T, 2, 2>& M)
+	{
+		return (M(0, 0) * M(1, 1)) - (M(0, 1) * M(1, 0));
+	}
+	
+	template <arithmetic T>
+	T determinant(const Matrix<T, 3, 3>& M)
+	{
+		Matrix<T, 2, 2> A
+		{
+			{ M(1, 1), M(2, 1) },
+			{ M(1, 2), M(2, 2) }
+		};
+
+		Matrix<T, 2, 2> B
+		{
+			{ M(0, 1), M(2, 1) },
+			{ M(0, 2), M(2, 2) }
+		};
+
+		Matrix<T, 2, 2> X
+		{
+			{ M(0, 1), M(1, 1) },
+			{ M(0, 2), M(1, 2) }
+		};
+
+		return (M(0, 0) * determinant(A)) - (M(1, 0) * determinant(B)) + (M(2, 0) * determinant(X));
+	}
+}
+
+template <sf::arithmetic T, std::size_t X, std::size_t Y>
+sf::Matrix<T, X, Y> operator + (const sf::Matrix<T, X, Y>& A, const sf::Matrix<T, X, Y>& B)
+{
+	sf::Matrix<T, X, Y> M;
+
+	for (std::size_t r(0u); r < Y; ++r)
+	{
+		for (std::size_t c(0u); c < X; ++c)
+			M(r, c) = A(r, c) + B(r, c);
+	}
+
+	return M;
+}
+
+template <sf::arithmetic T, std::size_t X, std::size_t Y>
+sf::Matrix<T, X, Y> operator - (const sf::Matrix<T, X, Y>& A, const sf::Matrix<T, X, Y>& B)
+{
+	sf::Matrix<T, X, Y> M;
+
+	for (std::size_t r(0u); r < Y; ++r)
+	{
+		for (std::size_t c(0u); c < X; ++c)
+			M(r, c) = A(r, c) - B(r, c);
+	}
+
+	return M;
+}
+
+template <sf::arithmetic T, sf::arithmetic U, std::size_t X, std::size_t Y>
+sf::Matrix<T, X, Y> operator * (const sf::Matrix<T, X, Y>& A, U scalar)
+{
+	sf::Matrix<T, X, Y> M(A);
+	M *= scalar;
+
+	return M;
+}
+
+template <sf::arithmetic T, sf::arithmetic U, std::size_t X, std::size_t Y>
+sf::Matrix<T, X, Y> operator / (const sf::Matrix<T, X, Y>& A, U scalar)
+{
+	sf::Matrix<T, X, Y> M(A);
+	M /= scalar;
+
+	return M;
 }
 
 #endif // SFML_MATRIX_HPP

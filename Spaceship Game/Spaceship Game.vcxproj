@@ -112,7 +112,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>E:\SFML Repository\Spaceship Game\SFML-2.5.1-Modified\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,6 +165,9 @@
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\Player.h" />
+    <ClInclude Include="SFML-2.5.1-Modified\include\SFML\System.hpp" />
+    <ClInclude Include="SFML-2.5.1-Modified\include\SFML\System\Fraction.hpp" />
+    <ClInclude Include="SFML-2.5.1-Modified\include\SFML\System\Matrix.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

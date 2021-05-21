@@ -47,5 +47,14 @@
     <ClInclude Include="include\Enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SFML-2.5.1-Modified\include\SFML\System\Fraction.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1-Modified\include\SFML\System\Matrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SFML-2.5.1-Modified\include\SFML\System.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

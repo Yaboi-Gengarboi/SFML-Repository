@@ -2,7 +2,7 @@
 // 
 // This is a modified version of the SFML 2.5.1 file System.hpp
 // Modified by Justyn Durnford
-// Last modified on 2021-05-15
+// Last modified on 2021-05-19
 // 
 // SFML - Simple and Fast Multimedia Library
 // Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
@@ -26,7 +26,6 @@
 //
 ////////////////////////////////////////////////////////////
 
-
 #ifndef SFML_SYSTEM_HPP
 #define SFML_SYSTEM_HPP
 
@@ -39,7 +38,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/FileInputStream.hpp>
-#include <SFML/System/FixedMatrix.hpp>
+#include <SFML/System/Fraction.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
@@ -50,6 +49,7 @@
 #include <SFML/System/Point3.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/String.hpp>
+#include <SFML/System/Table.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/ThreadLocal.hpp>
 #include <SFML/System/ThreadLocalPtr.hpp>
